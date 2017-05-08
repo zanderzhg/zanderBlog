@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>后台登陆</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="container">
+    <div id="login-overlay" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Login to Zander's Blog</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="well">
+                            <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}"
+                                  novalidate="novalidate">
+                                {{ loginform.hidden_tag() }}
+                                <div class="form-group">
+                                    {{ loginform.email.label(class_='control-label') }}
+                                    {{ loginform.email(class_='form-control',required='',placeholder='example@admin.com') }}
+                                    {% for error in loginform.email.errors %}
+                                        <span class="help-block" style="color:red">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    {{ loginform.password.label(class_='control-label') }}
+                                    {{ loginform.password(class_='form-control',required='') }}
+                                    {% for error in loginform.password.errors %}
+                                        <span class="help-block" style="color:red">{{ error }}</span>
+                                    {% endfor %}
+
+                                </div>
+                                {% for message in get_flashed_messages() %}
+                                    <div class="alert alert-warning">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <strong>Title!</strong> {{ message }}
+                                    </div>
+                                {% endfor %}
+                                
+
+                                <div class="checkbox">
+                                    <label>
+                                        {{ loginform.remeberme }} 保持登陆
+                                    </label>
+                                    <p class="help-block">(如果这不是公用电脑)</p>
+                                </div>
+                                {{ loginform.submit(class_='btn btn-success btn-block') }}
+                                <a href="#" class="btn btn-default btn-block">忘记密码(未提供)</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- /.container -->
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>
