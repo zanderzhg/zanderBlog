@@ -5,7 +5,7 @@ QQ:867662267
 '''
 
 from flask_wtf import FlaskForm
-from wtforms import StringField,SubmitField,HiddenField,BooleanField
+from wtforms import StringField,SubmitField,HiddenField,BooleanField,SelectField
 from wtforms.validators import DataRequired
 
 class AddMenuForm(FlaskForm):
@@ -16,3 +16,6 @@ class EditMenuForm(AddMenuForm):
 
     id = HiddenField(u'ID')
     visibled = BooleanField(u'是否隐藏')
+
+class AddCategoryForm(FlaskForm):
+    categoryname = SelectField()

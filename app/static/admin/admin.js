@@ -14,6 +14,16 @@ $(function () {
         $('.search-input').focus();
     });
 });
+
+
+//删除分类
+function delCategory(url) {
+    $('#delCategoryCli').click(function () {
+        window.location.href = url;
+    });
+    $('#delCategoryModal').modal();
+}
+
 // 删除导航
 function delMenu(url) {
     $('#delMenuClick').click(function () {
@@ -24,13 +34,13 @@ function delMenu(url) {
 
 function getMenu_info(url) {
     $.ajax({
-        url : url,
-        method : 'get',
-        dataType : 'json',
-        success : function (menuinfo) {
+        url: url,
+        method: 'get',
+        dataType: 'json',
+        success: function (menuinfo) {
             $('#id').val(menuinfo.id);
             $('#menuname').val(menuinfo.menuname);
-            $('#visibled').attr('checked',menuinfo.visibled)
+            $('#visibled').attr('checked', menuinfo.visibled)
         }
     });
     $('#editmodel').modal();

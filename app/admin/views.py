@@ -7,7 +7,7 @@ QQ:867662267
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required
 from . import admin
-from ..models import Menus,Category
+from ..models import Menus, Category
 from .. import db
 from .forms import AddMenuForm, EditMenuForm
 
@@ -50,17 +50,19 @@ def menu_get_info(id=None):
     menu = Menus.query.filter_by(id=id).first_or_404()
     return jsonify(menu.to_json())
 
-#修改导航
-@admin.route('/menus/edit/',methods=['post'])
+
+# 修改导航
+@admin.route('/menus/edit/', methods=['post'])
 @login_required
 def menus_edit():
     form = EditMenuForm(request.form)
     menu = Menus.query.filter_by(id=form.id.data).first()
-    (menu.menuName,menu.visible) = (form.menuname.data,form.visibled.data)
+    (menu.menuName, menu.visible) = (form.menuname.data, form.visibled.data)
     db.session.add(menu)
     db.session.commit()
-    flash(u'修改成功','success')
+    flash(u'修改成功', 'success')
     return redirect(url_for('admin.menus'))
+
 
 # 隐藏或显示导航菜单
 @admin.route('/menus/setvisible/<int:id>/')
@@ -91,10 +93,28 @@ def menu_del(id=None):
         flash(u'删除失败', 'warning')
     return redirect(url_for('admin.menus'))
 
-#分类列表
+
+# 分类列表
 @admin.route('/category/list/')
+@admin.route('/category/list/<int:page>')
 @login_required
-def category_list():
-    categorys = Category.query.join(Menus, Menus.id == Category.menuid).filter(Menus.id == Category.menuid).order_by(
-        Category.orderNo)
-    return categorys
+def category_list(page=1):
+    # c = Category.query.all()
+    categories = Category.query.order_by(Category.orderNo).paginate(page,
+                                                                    per_page=10,
+                                                                    error_out=False)
+    return render_template('admin/category.html', categories=categories)
+
+
+# 删除分类
+@admin.route('/category/del/<int:id>')
+@login_required
+def category_del(id=None):
+    delcategory = Category.query.filter_by(id=id).first()
+    if delcategory is not None:
+        db.session.delete(delcategory)
+        db.session.commit()
+        flash(u'删除成功', 'success')
+    else:
+        flash(u'删除失败', 'warning')
+    return redirect(url_for('admin.category_list'))

@@ -1,5 +1,5 @@
 {% extends 'admin/admin_base.html' %}
-
+{% import 'admin/macro.html' as helper %}
 {% block content %}
     <div class="panel panel-default panel-table">
         <div class="panel-heading">
@@ -21,33 +21,62 @@
                 <tr>
                     <th><em class="fa fa-cog"></em></th>
                     <th class="hidden-xs">ID</th>
-                    <th>名称</th>
+                    <th>所属菜单</th>
+                    <th>分类名称</th>
                     <th>是否显示</th>
                 </tr>
                 </thead>
                 <tbody>
+                {% for category in categories.items %}
                     <tr>
                         <td align="center">
                             <button onclick=""
                                     class="btn btn-default"><em
                                     class="fa fa-pencil"></em></button>
-                            <button onclick=""
+                            <button onclick="delCategory('{{ url_for('admin.category_del',id=category.id) }}')"
                                     class="btn btn-danger"><em
                                     class="fa fa-trash"></em></button>
                         </td>
-                        <td class="hidden-xs">1</td>
-                        <td>daf</td>
-                        <td>
-                            dadfa
+                        <td class="hidden-xs">{{ category.id }}</td>
+                        <td>{{ category.menus.menuName }}</td>
+                        <td>{{ category.categoryName }}</td>
+                        <td><span
+                                class="label label-{{ 'warning' if category.visibled else 'success' }}">{{ '隐藏' if category.visibled else '显示' }}</span>
                         </td>
                     </tr>
+                {% endfor %}
+
 
                 </tbody>
             </table>
 
         </div>
         <div class="panel-footer">
-
+        {{ helper.render_admin_pagination(categories,'.category_list') }}
         </div>
     </div>
+
+    <div class="modal fade" id="delCategoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    本分类删除将不可恢复
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button id="delCategoryCli" type="button"
+                            class="btn btn-primary">确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 {% endblock %}
