@@ -30,7 +30,7 @@
                 {% for category in categories.items %}
                     <tr>
                         <td align="center">
-                            <button onclick=""
+                            <button onclick="getCategory_info('{{ url_for('admin.get_category_info',id=category.id) }}')"
                                     class="btn btn-default"><em
                                     class="fa fa-pencil"></em></button>
                             <button onclick="delCategory('{{ url_for('admin.category_del',id=category.id) }}')"
@@ -38,7 +38,7 @@
                                     class="fa fa-trash"></em></button>
                         </td>
                         <td class="hidden-xs">{{ category.id }}</td>
-                        <td>{{ category.menus.menuName }}</td>
+                        <td>{{ category.menus.menuName if category.menus.menuName != null else '未分类' }}</td>
                         <td>{{ category.categoryName }}</td>
                         <td><span
                                 class="label label-{{ 'warning' if category.visibled else 'success' }}">{{ '隐藏' if category.visibled else '显示' }}</span>
@@ -56,6 +56,46 @@
         </div>
     </div>
 
+
+    {#    修改分类modal#}
+    <div class="modal fade" id="editCategoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">修改分类</h4>
+                </div>
+                <form action="{{ url_for('admin.category_edit') }}" method="post" class="form-horizontal"
+                      role="form">
+                    {{ editcategoryform.hidden_tag() }}
+                    <div class="modal-body">
+
+                         <div class="form-group">
+                            {{ editcategoryform.categoryname.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ editcategoryform.categoryname(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ editcategoryform.menuselect.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ editcategoryform.menuselect(class_='form-control') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">Close
+                        </button>
+                        {{ addcategoryform.submit(class_='btn btn-primary') }}
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     {#    新增分类modal#}
     <div class="modal fade" id="addCategoryModal">
         <div class="modal-dialog">
@@ -67,7 +107,8 @@
                     <h4 class="modal-title">新增分类</h4>
                 </div>
 
-                <form action="{{ url_for('admin.category_add') }}" method="post" class="form-horizontal"
+                <form action="{{ url_for('admin.category_add') }}" method="post"
+                      class="form-horizontal"
                       role="form">
                     {{ addcategoryform.hidden_tag() }}
                     <div class="modal-body">
@@ -94,7 +135,6 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-
 
     {#     删除分类modal#}
     <div class="modal fade" id="delCategoryModal">

@@ -32,6 +32,22 @@ function delMenu(url) {
     $('#delMenuModal').modal();
 }
 
+//修改分类
+function getCategory_info(url) {
+    $.ajax({
+        url : url,
+        method : 'get',
+        dataType : 'json',
+        success : function (categoryinfo) {
+            $('#id').val(categoryinfo.id);
+            $('#categoryname').val(categoryinfo.categoryname);
+            $('#menuselect').val(categoryinfo.menuid)
+        }
+    });
+    $('#editCategoryModal').modal();
+}
+
+// 修改导航
 function getMenu_info(url) {
     $.ajax({
         url: url,

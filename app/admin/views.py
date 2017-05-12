@@ -9,7 +9,7 @@ from flask_login import login_required
 from . import admin
 from ..models import Menus, Category
 from .. import db
-from .forms import AddMenuForm, EditMenuForm, AddCategoryForm
+from .forms import AddMenuForm, EditMenuForm, AddCategoryForm,EditCategoryForm
 
 
 @admin.route('/')
@@ -86,6 +86,11 @@ def menus_setvisible(id=None):
 def menu_del(id=None):
     delmenu = Menus.query.filter_by(id=id).first()
     if delmenu is not None:
+        categorys = Category.query.filter_by(menuid=id).all()
+        for c in categorys:
+            c.menuid = -1
+            db.session.add(c)
+            db.session.commit()
         db.session.delete(delmenu)
         db.session.commit()
         flash(u'删除成功', 'success')
@@ -99,13 +104,33 @@ def menu_del(id=None):
 @admin.route('/category/list/<int:page>')
 @login_required
 def category_list(page=1):
-    # c = Category.query.all()
     categories = Category.query.order_by(Category.orderNo).paginate(page,
                                                                     per_page=10,
                                                                     error_out=False)
     addcategoryform = AddCategoryForm()
+    editcategoryform = EditCategoryForm()
     return render_template('admin/category.html', categories=categories,
-                           addcategoryform=addcategoryform)
+                           addcategoryform=addcategoryform,editcategoryform=editcategoryform)
+
+
+# 获取分类
+@admin.route('/get-category/<int:id>')
+@login_required
+def get_category_info(id=None):
+    category = Category.query.filter_by(id=id).first_or_404()
+    return jsonify(category.to_json())
+
+#修改分类
+@admin.route('/category/edit/',methods=['POST'])
+@login_required
+def category_edit():
+    form = EditCategoryForm(request.form)
+    category = Category.query.filter_by(id=form.id.data).first()
+    (category.categoryName,category.menuid) = (form.categoryname.data,form.menuselect.data)
+    db.session.add(category)
+    db.session.commit()
+    flash(u'修改分类成功','success')
+    return redirect(url_for('admin.category_list'))
 
 
 # 新增分类
@@ -120,6 +145,7 @@ def category_add():
         else:
             flash(u'新增失败', 'warning')
     return redirect(url_for('admin.category_list'))
+
 
 # 删除分类
 @admin.route('/category/del/<int:id>')

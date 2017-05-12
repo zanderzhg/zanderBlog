@@ -13,27 +13,28 @@ class Menus(db.Model):
     __tablename__ = 'menus'
 
     id = db.Column(db.Integer, primary_key=True)
-    menucategory = db.relationship('Category',backref='menus',lazy='dynamic')
+    menucategory = db.relationship('Category', backref='menus', lazy='dynamic')
     menuName = db.Column(db.String(24), unique=True, index=True, nullable=False)
     orderNo = db.Column(db.Integer)
     visible = db.Column(db.Boolean, default=False)
 
     def to_json(self):
-        json_post = {
-            'id' : self.id,
-            'menuname' : self.menuName,
-            'visibled' : self.visible
+        json_menu = {
+            'id': self.id,
+            'menuname': self.menuName,
+            'visibled': self.visible
         }
-        return json_post
+        return json_menu
 
-#上移导航位置
+    # 上移导航位置
     @staticmethod
     def up_menus(menu_id):
         upmenu = Menus.query.filter_by(menu_id).first()
         if upmenu is not None:
             pass
 
-# 插入测试数据
+        # 插入测试数据
+
     @staticmethod
     def insert_test_menus():
         menuslst = [
@@ -49,7 +50,8 @@ class Menus(db.Model):
             db.session.add(menu)
             db.session.commit()
 
-# 新增导航菜单
+        # 新增导航菜单
+
     @staticmethod
     def insert_menus(menuname):
         tempmenu = Menus.query.filter_by(menuName=menuname).first()
@@ -64,24 +66,34 @@ class Menus(db.Model):
             db.session.commit()
             return True
 
-#分类表
+
+# 分类表
 class Category(db.Model):
     __tablename__ = 'category'
 
-    id = db.Column(db.Integer,primary_key=True)
-    menuid = db.Column(db.Integer,db.ForeignKey('menus.id'))
-    categoryName = db.Column(db.String(32),unique=True,index=True)
+    id = db.Column(db.Integer, primary_key=True)
+    menuid = db.Column(db.Integer, db.ForeignKey('menus.id'))
+    categoryName = db.Column(db.String(32), unique=True, index=True)
     orderNo = db.Column(db.Integer)
-    visibled = db.Column(db.Boolean,default=False)
+    visibled = db.Column(db.Boolean, default=False)
 
-    #新增分类
+    def to_json(self):
+        json_category = {
+            "id": self.id,
+            "categoryname": self.categoryName,
+            "menuid": self.menuid
+        }
+        return json_category
+
+    # 新增分类
     @staticmethod
-    def insert_category(categoryname,id=None):
-        tempcategory = Category.query.filter_by(categoryName=categoryname).first()
+    def insert_category(categoryname, id=None):
+        tempcategory = Category.query.filter_by(
+            categoryName=categoryname).first()
         if tempcategory is not None:
             return False
         else:
-            category = Category(categoryName=categoryname,menuid=id)
+            category = Category(categoryName=categoryname, menuid=id)
             db.session.add(category)
             db.session.commit()
             category.orderNo = category.id
@@ -110,7 +122,7 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-#插入用户数据
+    # 插入用户数据
     @staticmethod
     def insert_user():
         user = User(userName='admin', email='admin@admin.com', password='admin')
