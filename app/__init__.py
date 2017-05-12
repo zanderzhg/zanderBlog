@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_login import LoginManager
 from flask_babel import Babel
+from flask_pagedown import PageDown
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -17,6 +18,7 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = u'没有登陆 '
 login_manager.login_message_category = 'info'
 bable = Babel()
+pagedown = PageDown()
 
 
 def create_app(config_name):
@@ -26,6 +28,7 @@ def create_app(config_name):
     bable.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+    pagedown.init_app(app)
 
     from app.admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint,url_prefix='/admin')

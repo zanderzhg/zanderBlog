@@ -6,6 +6,7 @@ QQ:867662267
 from . import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 
 # 导航表
@@ -72,6 +73,7 @@ class Category(db.Model):
     __tablename__ = 'category'
 
     id = db.Column(db.Integer, primary_key=True)
+    type = db.relationship('Post',backref='posttype',lazy='dynamic')
     menuid = db.Column(db.Integer, db.ForeignKey('menus.id'))
     categoryName = db.Column(db.String(32), unique=True, index=True)
     orderNo = db.Column(db.Integer)
@@ -101,12 +103,25 @@ class Category(db.Model):
             db.session.commit()
             return True
 
+# 文章表
+class Post(db.Model):
+    __tablename__ = 'post'
+
+    id = db.Column(db.Integer,primary_key=True)
+    title = db.Column(db.String(32),index=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
+    author_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+    category_id = db.Column(db.Integer,db.ForeignKey('category.id'))
+    visibled = db.Column(db.Boolean,default=False)
+
 
 # 用户表
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
+    posts = db.relationship('Post',backref='author',lazy='dynamic')
     userName = db.Column(db.String(32))
     email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))

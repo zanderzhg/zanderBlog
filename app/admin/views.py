@@ -9,7 +9,7 @@ from flask_login import login_required
 from . import admin
 from ..models import Menus, Category
 from .. import db
-from .forms import AddMenuForm, EditMenuForm, AddCategoryForm,EditCategoryForm
+from .forms import AddMenuForm, EditMenuForm, AddCategoryForm,EditCategoryForm,PostsForm
 
 
 @admin.route('/')
@@ -159,3 +159,10 @@ def category_del(id=None):
     else:
         flash(u'删除失败', 'warning')
     return redirect(url_for('admin.category_list'))
+
+#新增博文章
+@admin.route('/posts/add/',methods=['POST','GET'])
+@login_required
+def post_add():
+    postaddform = PostsForm()
+    return render_template('admin/post-add.html',postaddform=postaddform)

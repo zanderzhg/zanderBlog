@@ -1,0 +1,36 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="pannel-title"><h3>新增博文</h3></div>
+        </div>
+        <form action="" method="post" role="form">
+            {{ postaddform.hidden_tag() }}
+            <div class="panel-body">
+                <div class="form-group">
+                    {{ postaddform.title(class_='form-control',placeholder=postaddform.title.label.text) }}
+                </div>
+                <div class="form-group">
+                    {{ postaddform.poststype.label(class_='control-label') }}
+                    {{ postaddform.poststype(class_='form-control') }}
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ postaddform.body(rows=20,only_input=True, class_="input-markdown form-control", placeholder=postaddform.body.label.text) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ postaddform.body(only_preview=True,class_='form-control') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                {{ postaddform.submit(class_='btn btn-primary') }}
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ pagedown.include_pagedown() }}
+{% endblock %}

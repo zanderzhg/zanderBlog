@@ -94,7 +94,7 @@
                                 <div id="dropdown-category" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <ul class="nav navbar-nav">
-                                            <li><a href="#">新增博文</a></li>
+                                            <li><a href="{{ url_for('admin.post_add') }}">新增博文</a></li>
                                             <li><a href="#">博文列表</a></li>
                                         </ul>
                                     </div>
@@ -155,5 +155,8 @@
 <script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="{{ url_for('static',filename='admin/admin.js') }}"></script>
+{% block scripts %}
+
+{% endblock %}
 </body>
 </html>
