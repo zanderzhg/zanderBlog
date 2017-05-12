@@ -9,7 +9,7 @@ from flask_login import login_required
 from . import admin
 from ..models import Menus, Category
 from .. import db
-from .forms import AddMenuForm, EditMenuForm
+from .forms import AddMenuForm, EditMenuForm, AddCategoryForm
 
 
 @admin.route('/')
@@ -40,7 +40,7 @@ def menu_add():
             flash(u'新增导航 <{}> 成功'.format(menuaddform.menuname.data), 'success')
         else:
             flash(u'导航 <{}> 已存在'.format(menuaddform.menuname.data), 'warning')
-        return redirect(url_for('admin.menus'))
+    return redirect(url_for('admin.menus'))
 
 
 # 获取导航
@@ -103,8 +103,23 @@ def category_list(page=1):
     categories = Category.query.order_by(Category.orderNo).paginate(page,
                                                                     per_page=10,
                                                                     error_out=False)
-    return render_template('admin/category.html', categories=categories)
+    addcategoryform = AddCategoryForm()
+    return render_template('admin/category.html', categories=categories,
+                           addcategoryform=addcategoryform)
 
+
+# 新增分类
+@admin.route('/category/add/', methods=['POST'])
+@login_required
+def category_add():
+    categoryform = AddCategoryForm()
+    if categoryform.validate_on_submit():
+        if Category.insert_category(categoryform.categoryname.data,
+                                    categoryform.menuselect.data):
+            flash(u'新增成功', 'success')
+        else:
+            flash(u'新增失败', 'warning')
+    return redirect(url_for('admin.category_list'))
 
 # 删除分类
 @admin.route('/category/del/<int:id>')

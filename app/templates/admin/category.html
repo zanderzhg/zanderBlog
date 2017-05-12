@@ -10,7 +10,7 @@
                 <div class="col col-xs-6 text-right">
                     <a type="button"
                        class="btn btn-sm btn-primary btn-create"
-                       data-toggle="modal" href="#addMenuModal">新增
+                       data-toggle="modal" href="#addCategoryModal">新增
                     </a>
                 </div>
             </div>
@@ -52,10 +52,51 @@
 
         </div>
         <div class="panel-footer">
-        {{ helper.render_admin_pagination(categories,'.category_list') }}
+            {{ helper.render_admin_pagination(categories,'.category_list') }}
         </div>
     </div>
 
+    {#    新增分类modal#}
+    <div class="modal fade" id="addCategoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">新增分类</h4>
+                </div>
+
+                <form action="{{ url_for('admin.category_add') }}" method="post" class="form-horizontal"
+                      role="form">
+                    {{ addcategoryform.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{ addcategoryform.categoryname.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ addcategoryform.categoryname(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ addcategoryform.menuselect.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ addcategoryform.menuselect(class_='form-control') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">取消
+                        </button>
+                        {{ addcategoryform.submit(class_='btn btn-primary') }}
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    {#     删除分类modal#}
     <div class="modal fade" id="delCategoryModal">
         <div class="modal-dialog">
             <div class="modal-content">

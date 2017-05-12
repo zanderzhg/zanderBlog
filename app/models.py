@@ -74,6 +74,21 @@ class Category(db.Model):
     orderNo = db.Column(db.Integer)
     visibled = db.Column(db.Boolean,default=False)
 
+    #新增分类
+    @staticmethod
+    def insert_category(categoryname,id=None):
+        tempcategory = Category.query.filter_by(categoryName=categoryname).first()
+        if tempcategory is not None:
+            return False
+        else:
+            category = Category(categoryName=categoryname,menuid=id)
+            db.session.add(category)
+            db.session.commit()
+            category.orderNo = category.id
+            db.session.add(category)
+            db.session.commit()
+            return True
+
 
 # 用户表
 class User(db.Model, UserMixin):

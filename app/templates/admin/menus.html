@@ -62,10 +62,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
                     <h4 class="modal-title">修改导航</h4>
                 </div>
-                <form action="{{ url_for('admin.menus_edit') }}" method="POST" role="form" class="form-horizontal"
+                <form action="{{ url_for('admin.menus_edit') }}" method="POST"
+                      role="form" class="form-horizontal"
                       autocomplete="off">
                     {{ editmenuform.hidden_tag() }}
                     <div class="modal-body">
@@ -83,7 +86,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">关闭
+                        </button>
                         {{ editmenuform.submit(class_='btn btn-primary') }}
                     </div>
 
@@ -102,7 +107,8 @@
                     </button>
                     <h4 class="modal-title">新增导航菜单</h4>
                 </div>
-                <form action="{{ url_for('admin.menu_add') }}" method="post" class="form-horizontal"
+                <form action="{{ url_for('admin.menu_add') }}" method="post"
+                      class="form-horizontal"
                       role="form">
                     {{ addmenuform.hidden_tag() }}
                     <div class="modal-body">
