@@ -160,6 +160,14 @@ def category_del(id=None):
         flash(u'删除失败', 'warning')
     return redirect(url_for('admin.category_list'))
 
+#博文列表
+@admin.route('/post/list/')
+@admin.route('/post/list/<int:page>/')
+@login_required
+def post_list(page=0):
+    posts = Post.query.order_by(Post.timestamp).paginate(page,per_page=10,error_out=False)
+    return render_template('admin/post-list.html',posts=posts)
+
 #新增博文章
 @admin.route('/posts/add/',methods=['POST','GET'])
 @login_required
@@ -171,6 +179,16 @@ def post_add():
         db.session.commit()
         return redirect(url_for('admin.menus'))
     return render_template('admin/post-add.html',postaddform=postaddform)
+
+#删除文章
+@admin.route('/posts/del/<int:id>')
+@login_required
+def posts_del(id=None):
+    post = Post.query.filter_by(id=id).first()
+    db.session.delete(post)
+    db.session.commit()
+    flash(u'删除成功','success')
+    return redirect(url_for('admin.post_list'))
 
 @admin.route('/test/')
 @login_required

@@ -1,0 +1,81 @@
+{% extends 'admin/admin_base.html' %}
+{% block content %}
+    <div class="panel panel-default panel-table">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col col-xs-6">
+                    <h3 class="panel-title">博文列表</h3>
+                </div>
+                <div class="col col-xs-6 text-right">
+                    <a type="button"
+                       class="btn btn-sm btn-primary btn-create"
+                       href="{{ url_for('admin.post_add') }}">新增
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-bordered table-list">
+                <thead>
+                <tr>
+                    <th><em class="fa fa-cog"></em></th>
+                    <th class="hidden-xs">ID</th>
+                    <th>文章标题</th>
+                    <th>文章分类分类</th>
+                    <th>发博时间</th>
+                    <th>是否隐藏</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for post in posts.items %}
+                    <tr>
+                        <td align="center">
+                            <button onclick=""
+                                    class="btn btn-default"><em
+                                    class="fa fa-pencil"></em></button>
+                            <button onclick="delPost('{{ url_for('admin.posts_del',id=post.id) }}')"
+                                    class="btn btn-danger"><em
+                                    class="fa fa-trash"></em></button>
+                        </td>
+                        <td class="hidden-xs">{{ post.id }}</td>
+                        <td>{{ post.title }}</td>
+                        <td>{{ post.posttype.categoryName }}</td>
+                        <td>{{ post.timestamp }}</td>
+                        <td>
+                            <span class="label label-{{ 'warning' if post.visibled else 'success' }}">{{ '隐藏' if post.visibled else '显示' }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer">
+
+        </div>
+    </div>
+
+{#    删除博文Modal#}
+    <div class="modal fade" id="delPostModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    该文章删除后将不可恢复
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button id="delPostCli" type="button" class="btn btn-primary">确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+{% endblock %}

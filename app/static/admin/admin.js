@@ -32,6 +32,14 @@ function delMenu(url) {
     $('#delMenuModal').modal();
 }
 
+// 删除文章
+function delPost(url) {
+    $('#delPostCli').click(function () {
+        window.location.href = url;
+    });
+    $('#delPostModal').modal();
+
+}
 //修改分类
 function getCategory_info(url) {
     $.ajax({
