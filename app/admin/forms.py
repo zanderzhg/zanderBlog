@@ -47,7 +47,7 @@ class PostsForm(FlaskForm):
     title = StringField(u'博客标题',validators=[DataRequired()])
     poststype = SelectField(u'所属分类',coerce=int)
     body = PageDownField(u'博客正文',validators=[DataRequired()])
-    submit = SubmitField(u'确定')
+    submit = SubmitField(u'提交')
 
 
     def __init__(self,*args,**kwargs):

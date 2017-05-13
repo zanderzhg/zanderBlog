@@ -4,15 +4,21 @@
         <div class="panel-heading">
             <div class="pannel-title"><h3>新增博文</h3></div>
         </div>
-        <form action="" method="post" role="form">
+        <form class="form-horizontal" action="#" method="post" role="form">
             {{ postaddform.hidden_tag() }}
             <div class="panel-body">
                 <div class="form-group">
                     {{ postaddform.title(class_='form-control',placeholder=postaddform.title.label.text) }}
                 </div>
                 <div class="form-group">
-                    {{ postaddform.poststype.label(class_='control-label') }}
-                    {{ postaddform.poststype(class_='form-control') }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ postaddform.poststype.label(class_='control-label col-md-2') }}
+                            <div class="col-md-4">
+                                {{ postaddform.poststype(class_='form-control') }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="row">

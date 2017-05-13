@@ -5,9 +5,9 @@ QQ:867662267
 '''
 
 from flask import render_template, redirect, url_for, flash, request, jsonify
-from flask_login import login_required
+from flask_login import login_required,current_user
 from . import admin
-from ..models import Menus, Category
+from ..models import Menus, Category,Post
 from .. import db
 from .forms import AddMenuForm, EditMenuForm, AddCategoryForm,EditCategoryForm,PostsForm
 
@@ -165,4 +165,14 @@ def category_del(id=None):
 @login_required
 def post_add():
     postaddform = PostsForm()
+    if postaddform.validate_on_submit():
+        post = Post(title=postaddform.title.data,body=postaddform.body.data,author_id=current_user.id,category_id=postaddform.poststype.data)
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('admin.menus'))
     return render_template('admin/post-add.html',postaddform=postaddform)
+
+@admin.route('/test/')
+@login_required
+def text():
+    return str(current_user.userName)
