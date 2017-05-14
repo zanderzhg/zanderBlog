@@ -5,11 +5,13 @@ QQ:867662267
 '''
 
 from flask import render_template, redirect, url_for, flash, request, jsonify
-from flask_login import login_required,current_user
+from flask_login import login_required, current_user
 from . import admin
-from ..models import Menus, Category,Post
+from ..models import Menus, Category, Post
 from .. import db
-from .forms import AddMenuForm, EditMenuForm, AddCategoryForm,EditCategoryForm,PostsForm
+from .forms import AddMenuForm, EditMenuForm, AddCategoryForm, EditCategoryForm, \
+    PostsForm, EditPostForm
+from datetime import datetime
 
 
 @admin.route('/')
@@ -110,7 +112,8 @@ def category_list(page=1):
     addcategoryform = AddCategoryForm()
     editcategoryform = EditCategoryForm()
     return render_template('admin/category.html', categories=categories,
-                           addcategoryform=addcategoryform,editcategoryform=editcategoryform)
+                           addcategoryform=addcategoryform,
+                           editcategoryform=editcategoryform)
 
 
 # 获取分类
@@ -120,16 +123,18 @@ def get_category_info(id=None):
     category = Category.query.filter_by(id=id).first_or_404()
     return jsonify(category.to_json())
 
-#修改分类
-@admin.route('/category/edit/',methods=['POST'])
+
+# 修改分类
+@admin.route('/category/edit/', methods=['POST'])
 @login_required
 def category_edit():
     form = EditCategoryForm(request.form)
     category = Category.query.filter_by(id=form.id.data).first()
-    (category.categoryName,category.menuid) = (form.categoryname.data,form.menuselect.data)
+    (category.categoryName, category.menuid) = (
+        form.categoryname.data, form.menuselect.data)
     db.session.add(category)
     db.session.commit()
-    flash(u'修改分类成功','success')
+    flash(u'修改分类成功', 'success')
     return redirect(url_for('admin.category_list'))
 
 
@@ -160,35 +165,74 @@ def category_del(id=None):
         flash(u'删除失败', 'warning')
     return redirect(url_for('admin.category_list'))
 
-#博文列表
+
+# 博文列表
 @admin.route('/post/list/')
 @admin.route('/post/list/<int:page>/')
 @login_required
-def post_list(page=0):
-    posts = Post.query.order_by(Post.timestamp).paginate(page,per_page=10,error_out=False)
-    return render_template('admin/post-list.html',posts=posts)
+def post_list(page=1):
+    posts = Post.query.order_by(Post.timestamp).paginate(page, per_page=10,
+                                                         error_out=False)
+    return render_template('admin/post-list.html', posts=posts)
 
-#新增博文章
-@admin.route('/posts/add/',methods=['POST','GET'])
+
+# 新增博文章
+@admin.route('/posts/add/', methods=['POST', 'GET'])
 @login_required
 def post_add():
     postaddform = PostsForm()
     if postaddform.validate_on_submit():
-        post = Post(title=postaddform.title.data,body=postaddform.body.data,author_id=current_user.id,category_id=postaddform.poststype.data)
+        post = Post(title=postaddform.title.data, body=postaddform.body.data,
+                    author_id=current_user.id,
+                    category_id=postaddform.poststype.data)
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('admin.menus'))
-    return render_template('admin/post-add.html',postaddform=postaddform)
+        return redirect(url_for('admin.post_list'))
+    return render_template('admin/post-add.html', postaddform=postaddform)
 
-#删除文章
+
+# 博文JSON信息
+@admin.route('/posts/get-post-info/<int:id>')
+@login_required
+def get_post_info(id=None):
+    post = Post.query.filter_by(id=id).first_or_404()
+    return jsonify(post.to_json())
+
+
+# 修改文章
+@admin.route('/posts/edit/<int:id>', methods=['POST', 'GET'])
+@login_required
+def post_edit(id=None):
+    editpostform = EditPostForm()
+    post = Post.query.filter_by(id=id).first()
+    editpostform.id.data = post.id
+    editpostform.title.data = post.title
+    editpostform.body.data = post.body
+    editpostform.poststype.data = post.category_id
+    if editpostform.validate_on_submit():
+        form = EditPostForm(request.form)
+        posts = Post.query.filter_by(id=id).first_or_404()
+        post.title = form.title.data
+        post.body = form.body.data
+        post.category_id = form.poststype.data
+        post.timestamp = datetime.utcnow()
+        db.session.add(posts)
+        db.session.commit()
+        flash(u'文章修改成功','success')
+        return redirect(url_for('admin.post_list'))
+    return render_template('admin/post-edit.html', editpostform=editpostform)
+
+
+# 删除文章
 @admin.route('/posts/del/<int:id>')
 @login_required
 def posts_del(id=None):
     post = Post.query.filter_by(id=id).first()
     db.session.delete(post)
     db.session.commit()
-    flash(u'删除成功','success')
+    flash(u'删除成功', 'success')
     return redirect(url_for('admin.post_list'))
+
 
 @admin.route('/test/')
 @login_required

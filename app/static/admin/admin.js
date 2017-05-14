@@ -38,8 +38,21 @@ function delPost(url) {
         window.location.href = url;
     });
     $('#delPostModal').modal();
+}
+//修改博客文章
+function editPost(url) {
+    location.href = url;
+    $.ajax({
+        url : url,
+        method : 'get',
+        dataType : 'json',
+        success : function (postinf) {
+            $('#title').val(postinf.title)
+        }
+    })
 
 }
+
 //修改分类
 function getCategory_info(url) {
     $.ajax({

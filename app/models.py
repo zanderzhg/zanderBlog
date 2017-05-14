@@ -118,6 +118,14 @@ class Post(db.Model):
     category_id = db.Column(db.Integer,db.ForeignKey('category.id'))
     visibled = db.Column(db.Boolean,default=False)
 
+    def to_json(self):
+        json_post = {
+            "id" : self.id,
+            "title" : self.title,
+            "body" : self.body
+        }
+        return json_post
+
     @staticmethod
     def on_changed_body(target,value,oldvalue,initiator):
         allowed_tags = ['a','abbr','acronym','b','blockquote','code',

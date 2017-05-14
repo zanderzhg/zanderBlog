@@ -1,4 +1,5 @@
 {% extends 'admin/admin_base.html' %}
+{% import 'admin/macro.html' as helper %}
 {% block content %}
     <div class="panel panel-default panel-table">
         <div class="panel-heading">
@@ -30,9 +31,9 @@
                 {% for post in posts.items %}
                     <tr>
                         <td align="center">
-                            <button onclick=""
+                            <a href="{{ url_for('admin.post_edit',id=post.id) }}"
                                     class="btn btn-default"><em
-                                    class="fa fa-pencil"></em></button>
+                                    class="fa fa-pencil"></em></a>
                             <button onclick="delPost('{{ url_for('admin.posts_del',id=post.id) }}')"
                                     class="btn btn-danger"><em
                                     class="fa fa-trash"></em></button>
@@ -51,7 +52,7 @@
             </table>
         </div>
         <div class="panel-footer">
-
+            {{ helper.render_admin_pagination(posts,'.post_list') }}
         </div>
     </div>
 
