@@ -1,4 +1,18 @@
 {% extends 'main/main-base.html' %}
 {% block content %}
-    <h1>哈啊哈</h1>
+    {% for post in posts.items %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ post.title }}</h3>
+            </div>
+            <div class="panel-body">
+                {% if posts.body_html %}
+                    {{ posts.body_html(class_="input-markdown") | safe }}
+                {% else %}
+                    {{ post.body }}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
 {% endblock %}

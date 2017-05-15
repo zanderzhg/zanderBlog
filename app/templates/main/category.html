@@ -1,0 +1,17 @@
+{% extends 'main/main-base.html' %}
+{% block content %}
+    <div class="row">
+    <div class="col-md-2">
+        <ul class="list-group">
+            {% for category in categorys.items %}
+                <li class="list-group-item">
+                <span class="badge">{{ category[1] }}</span>
+                {{ category[0] }}
+            </li>
+            {% endfor %}
+
+
+        </ul>
+    </div>
+    </div>
+{% endblock %}
