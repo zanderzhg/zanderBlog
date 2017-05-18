@@ -1,0 +1,131 @@
+{% extends 'admin/admin-base.html' %}
+
+{% import 'admin/_macro.html' as helper %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">菜单列表</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="example2_wrapper"
+                         class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example2"
+                                       class="table table-bordered table-hover dataTable"
+                                       role="grid"
+                                       aria-describedby="example2_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting_asc" tabindex="0"
+                                            aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-sort="ascending"
+                                            aria-label="Rendering engine: activate to sort column descending">
+                                            ID
+                                        </th>
+                                        <th class="sorting" tabindex="0"
+                                            aria-controls="example2" rowspan="1"
+                                            colspan="1"
+                                            aria-label="Browser: activate to sort column ascending">
+                                            名称
+                                        </th>
+                                        <th class="sorting" tabindex="0"
+                                            aria-controls="example2" rowspan="1"
+                                            colspan="1"
+                                            aria-label="Platform(s): activate to sort column ascending">
+                                            是否显示
+                                        </th>
+                                        <th class="sorting" tabindex="0"
+                                            aria-controls="example2" rowspan="1"
+                                            colspan="1"
+                                            aria-label="Engine version: activate to sort column ascending">
+                                            编辑
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for menu in menulst.items %}
+                                    <tr role="row" class="odd">
+                                        <td class="sorting_1">{{ menu.id }}</td>
+                                        <td>{{ menu.menuName }}</td>
+                                        <td><span class="label label-{{ 'warning' if menu.visible else 'success' }}">{{ '隐藏' if menu.visible else '显示' }}</span></td>
+                                        <td>
+                                            <a href="" title="修改"><i
+                                                    class="fa fa-pencil"></i></a>
+                                            <a onclick="delMenu('{{ url_for('admin.menu_del',id=menu.id) }}')"><i
+                                                    class="fa fa-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+
+
+                                    </tbody>
+                                    <tfoot>
+{#                                    <tr>#}
+{#                                        <th rowspan="1" colspan="1">Rendering#}
+{#                                            engine#}
+{#                                        </th>#}
+{#                                        <th rowspan="1" colspan="1">Browser</th>#}
+{#                                        <th rowspan="1" colspan="1">#}
+{#                                            Platform(s)#}
+{#                                        </th>#}
+{#                                        <th rowspan="1" colspan="1">Engine#}
+{#                                            version#}
+{#                                        </th>#}
+{#                                    </tr>#}
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+    {{ helper.render_pagination(menulst,'.menu_list') }}
+
+
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+
+
+    {#    删除菜单modal框#}
+    <div class="modal fade" id="delMenuModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    本导航删除将不可恢复
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">关闭
+                    </button>
+                    <button id="delMenuClick" type="button"
+                            class="btn btn-primary">确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static',filename='admin/admin.js') }}"></script>
+{% endblock %}

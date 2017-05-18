@@ -19,7 +19,7 @@ def login():
             login_user(user,form.remeberme.data)
             return redirect(request.args.get('next') or url_for('admin.index'))
         flash(u'用户名或密码错误')
-    return render_template('auth/login.html',loginform=form)
+    return render_template('auth/login.html', loginform=form)
 
 @auth.route('/logout/')
 @login_required

@@ -17,18 +17,18 @@ from datetime import datetime
 @admin.route('/')
 @login_required
 def index():
-    return render_template('admin/admin_base.html')
+    return render_template('admin/admin-base.html')
 
 
 # 访问导航页
-@admin.route('/menus/')
-@admin.route('/menus/<int:page>')
+@admin.route('/menu/')
+@admin.route('/menu/<int:page>')
 @login_required
-def menus(page=1):
+def menu_list(page=1):
     menulst = Menus.query.order_by(Menus.orderNo).paginate(page, per_page=10)
     addmenuform = AddMenuForm()
     editmenuform = EditMenuForm()
-    return render_template('admin/menus.html', menulst=menulst,
+    return render_template('admin/menu.html', menulst=menulst,
                            addmenuform=addmenuform, editmenuform=editmenuform)
 
 
@@ -98,7 +98,7 @@ def menu_del(id=None):
         flash(u'删除成功', 'success')
     else:
         flash(u'删除失败', 'warning')
-    return redirect(url_for('admin.menus'))
+    return redirect(url_for('admin.menu_list'))
 
 
 # 分类列表

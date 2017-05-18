@@ -11,7 +11,6 @@ from flask_login import LoginManager
 from flask_babel import Babel
 from flask_pagedown import PageDown
 
-
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -20,8 +19,6 @@ login_manager.login_message = u'没有登陆 '
 login_manager.login_message_category = 'info'
 bable = Babel()
 pagedown = PageDown()
-
-
 
 def create_app(config_name):
     app = Flask(__name__)
