@@ -7,8 +7,8 @@ from . import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
-from markdown import markdown
-import bleach
+from flask_misaka import markdown
+from .render import HighlighterRenderer
 
 
 # 导航表
@@ -36,7 +36,7 @@ class Menus(db.Model):
         if upmenu is not None:
             pass
 
-        # 插入测试数据
+            # 插入测试数据
 
     @staticmethod
     def insert_test_menus():
@@ -53,7 +53,7 @@ class Menus(db.Model):
             db.session.add(menu)
             db.session.commit()
 
-        # 新增导航菜单
+            # 新增导航菜单
 
     @staticmethod
     def insert_menus(menuname):
@@ -75,7 +75,7 @@ class Category(db.Model):
     __tablename__ = 'category'
 
     id = db.Column(db.Integer, primary_key=True)
-    type = db.relationship('Post',backref='posttype',lazy='dynamic')
+    type = db.relationship('Post', backref='posttype', lazy='dynamic')
     menuid = db.Column(db.Integer, db.ForeignKey('menus.id'))
     categoryName = db.Column(db.String(32), unique=True, index=True)
     orderNo = db.Column(db.Integer)
@@ -91,13 +91,13 @@ class Category(db.Model):
 
     # 新增分类
     @staticmethod
-    def insert_category(categoryname, id=None,visibled=False):
+    def insert_category(categoryname, id=None, visibled=False):
         tempcategory = Category.query.filter_by(
             categoryName=categoryname).first()
         if tempcategory is not None:
             return False
         else:
-            category = Category(categoryName=categoryname, menuid=id,visibled=visibled)
+            category = Category(categoryName=categoryname, menuid=id, visibled=visibled)
             db.session.add(category)
             db.session.commit()
             category.orderNo = category.id
@@ -105,35 +105,43 @@ class Category(db.Model):
             db.session.commit()
             return True
 
+
 # 文章表
 class Post(db.Model):
     __tablename__ = 'post'
 
-    id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String(32),unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(32), unique=True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
-    author_id = db.Column(db.Integer,db.ForeignKey('user.id'))
-    category_id = db.Column(db.Integer,db.ForeignKey('category.id'))
-    visibled = db.Column(db.Boolean,default=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    visibled = db.Column(db.Boolean, default=False)
 
     def to_json(self):
         json_post = {
-            "id" : self.id,
-            "title" : self.title,
-            "body" : self.body
+            "id": self.id,
+            "title": self.title,
+            "body": self.body
         }
         return json_post
 
     @staticmethod
-    def on_changed_body(target,value,oldvalue,initiator):
-        allowed_tags = ['a','abbr','acronym','b','blockquote','code',
-                        'em','i','li','ol','pre','strong','ul',
-                        'h1','h2','h3','p']
-        target.body_html = bleach.linkify(bleach.clean(markdown(value,output_format='html'),tags=allowed_tags,strip=True))
+    def on_changed_body(target, value, oldvalue, initiator):
+        renderer = HighlighterRenderer()
+        target.body_html = markdown(value, renderer=HighlighterRenderer(),
+                                    fenced_code=True,
+                                    underline=True,
+                                    highlight=True,
+                                    disable_indented_code=True,
+                                    space_headers=True,
+                                    strikethrough=True,
+                                    footnotes=True,
+                                    tables=True,
+                                    math=True)
 
-db.event.listen(Post.body,'set',Post.on_changed_body)
+db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 
 # 用户表
@@ -141,7 +149,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
-    posts = db.relationship('Post',backref='author',lazy='dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
     userName = db.Column(db.String(32))
     email = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))

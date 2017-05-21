@@ -1,35 +1,39 @@
 {% extends 'main/main-base.html' %}
-{% import 'admin/macro.html' as helper %}
+{% import 'admin/_macro.html' as helper %}
 {% block stylesheets %}
-    <link rel="stylesheet"
-          href="{{ url_for('static',filename='main/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='admin/github.css') }}">
 {% endblock %}
+
 {% block content %}
 
-    <div class="container">
-        {% for post in posts.items %}
+    {% for post in posts.items %}
+        <div class="box box-primary with-border">
             <input type="hidden" name="id" value="{{ post.id }}">
-            <h1>{{ post.title }}</h1>
-            <p>{% if post.body_html %}
-                {{ post.body_html|safe }}
-            {% else %}
-                {{ post.body }}
-
-            {% endif %}</p>
-            <div>
-                <span class="badge">Posted {{ post.timestamp }}</span>
-                <div class="pull-right"><span
-                        class="label label-default">alice</span> <span
-                        class="label label-primary">story</span> <span
-                        class="label label-success">blog</span> <span
-                        class="label label-info">personal</span> <span
-                        class="label label-warning">Warning</span>
-                    <span class="label label-danger">Danger</span></div>
+            <div class="box-header">
+                <h1 class="box-title">{{ post.title }}</h1>
             </div>
-            <hr>
-        {% endfor %}
+            <div class="box-body">
+                <p>{% if post.body_html %}
+                    {{ post.body_html|safe }}
+                {% else %}
+                    {{ post.body }}
+                {% endif %}</p>
+            </div>
+            <div class="box-footer">
+                <div>
+                    <span class="badge">Posted {{ post.timestamp }}</span>
+                    <div class="pull-right"><span
+                            class="label label-default">alice</span> <span
+                            class="label label-primary">story</span> <span
+                            class="label label-success">blog</span> <span
+                            class="label label-info">personal</span> <span
+                            class="label label-warning">Warning</span>
+                        <span class="label label-danger">Danger</span></div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 
-        {{ helper.render_admin_pagination(posts,'.index') }}
-    </div>
+    {{ helper.render_pagination(posts,'.index') }}
 
 {% endblock %}
