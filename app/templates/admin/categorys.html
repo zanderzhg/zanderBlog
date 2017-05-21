@@ -1,0 +1,163 @@
+{% extends 'admin/admin_base.html' %}
+{% import 'admin/macro.html' as helper %}
+{% block content %}
+    <div class="panel panel-default panel-table">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col col-xs-6">
+                    <h3 class="panel-title">分类管理</h3>
+                </div>
+                <div class="col col-xs-6 text-right">
+                    <a type="button"
+                       class="btn btn-sm btn-primary btn-create"
+                       data-toggle="modal" href="#addCategoryModal">新增
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-bordered table-list">
+                <thead>
+                <tr>
+                    <th><em class="fa fa-cog"></em></th>
+                    <th class="hidden-xs">ID</th>
+                    <th>所属菜单</th>
+                    <th>分类名称</th>
+                    <th>是否显示</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for category in categories.items %}
+                    <tr>
+                        <td align="center">
+                            <button onclick="getCategory_info('{{ url_for('admin.get_category_info',id=category.id) }}')"
+                                    class="btn btn-default"><em
+                                    class="fa fa-pencil"></em></button>
+                            <button onclick="delCategory('{{ url_for('admin.category_del',id=category.id) }}')"
+                                    class="btn btn-danger"><em
+                                    class="fa fa-trash"></em></button>
+                        </td>
+                        <td class="hidden-xs">{{ category.id }}</td>
+                        <td>{{ category.menus.menuName if category.menus.menuName != null else '未分类' }}</td>
+                        <td>{{ category.categoryName }}</td>
+                        <td><span
+                                class="label label-{{ 'warning' if category.visibled else 'success' }}">{{ '隐藏' if category.visibled else '显示' }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="panel-footer">
+            {{ helper.render_admin_pagination(categories,'.category_list') }}
+        </div>
+    </div>
+
+
+    {#    修改分类modal#}
+    <div class="modal fade" id="editCategoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">修改分类</h4>
+                </div>
+                <form action="{{ url_for('admin.category_edit') }}" method="post" class="form-horizontal"
+                      role="form">
+                    {{ editcategoryform.hidden_tag() }}
+                    <div class="modal-body">
+
+                         <div class="form-group">
+                            {{ editcategoryform.categoryname.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ editcategoryform.categoryname(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ editcategoryform.menuselect.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ editcategoryform.menuselect(class_='form-control') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">Close
+                        </button>
+                        {{ addcategoryform.submit(class_='btn btn-primary') }}
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    {#    新增分类modal#}
+    <div class="modal fade" id="addCategoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">新增分类</h4>
+                </div>
+
+                <form action="{{ url_for('admin.category_add') }}" method="post"
+                      class="form-horizontal"
+                      role="form">
+                    {{ addcategoryform.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{ addcategoryform.categoryname.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ addcategoryform.categoryname(class_='form-control') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ addcategoryform.menuselect.label(class_='control-label col-md-2 col-md-offset-2') }}
+                            <div class="col-md-6">
+                                {{ addcategoryform.menuselect(class_='form-control') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">取消
+                        </button>
+                        {{ addcategoryform.submit(class_='btn btn-primary') }}
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    {#     删除分类modal#}
+    <div class="modal fade" id="delCategoryModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;
+                    </button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    本分类删除将不可恢复
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button id="delCategoryCli" type="button"
+                            class="btn btn-primary">确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+{% endblock %}

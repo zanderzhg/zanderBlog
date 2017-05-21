@@ -15,6 +15,7 @@ from flask_pagedown.fields import PageDownField
 class AddMenuForm(FlaskForm):
     menuname = StringField(u'导航名称',
                            validators=[DataRequired(message=u'导航名称不能为空')])
+    visibled = BooleanField(u'是否隐藏')
     submit = SubmitField(u'确定')
 
 
@@ -27,6 +28,7 @@ class AddCategoryForm(FlaskForm):
     categoryname = StringField(u'分类名称',
                                validators=[DataRequired(message=u'分类名称不能为空')])
     menuselect = SelectField(u'所属菜单', coerce=int)
+    visibled = BooleanField(u'是否显示',default=False)
     submit = SubmitField(u'确定')
 
     #  这段是在网上看到的,

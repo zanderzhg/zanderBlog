@@ -27,9 +27,8 @@ def index():
 def menu_list(page=1):
     menulst = Menus.query.order_by(Menus.orderNo).paginate(page, per_page=10)
     addmenuform = AddMenuForm()
-    editmenuform = EditMenuForm()
     return render_template('admin/menu.html', menulst=menulst,
-                           addmenuform=addmenuform, editmenuform=editmenuform)
+                           addmenuform=addmenuform)
 
 
 # 新增导航
@@ -42,7 +41,7 @@ def menu_add():
             flash(u'新增导航 <{}> 成功'.format(menuaddform.menuname.data), 'success')
         else:
             flash(u'导航 <{}> 已存在'.format(menuaddform.menuname.data), 'warning')
-    return redirect(url_for('admin.menus'))
+    return redirect(url_for('admin.menu_list'))
 
 
 # 获取导航
@@ -54,16 +53,21 @@ def menu_get_info(id=None):
 
 
 # 修改导航
-@admin.route('/menus/edit/', methods=['post'])
+@admin.route('/menus/edit/<int:id>', methods=['POST','GET'])
 @login_required
-def menus_edit():
-    form = EditMenuForm(request.form)
-    menu = Menus.query.filter_by(id=form.id.data).first()
-    (menu.menuName, menu.visible) = (form.menuname.data, form.visibled.data)
-    db.session.add(menu)
-    db.session.commit()
-    flash(u'修改成功', 'success')
-    return redirect(url_for('admin.menus'))
+def menu_edit(id=None):
+    form = EditMenuForm()
+    menu = Menus.query.filter_by(id=id).first()
+    form.menuname.data = menu.menuName
+    form.visibled.data = menu.visible
+    if form.validate_on_submit():
+        reqform = EditMenuForm(request.form)
+        (menu.menuName, menu.visible) = (reqform.menuname.data, reqform.visibled.data)
+        db.session.add(menu)
+        db.session.commit()
+        flash(u'修改成功', 'success')
+        return redirect(url_for('admin.menu_list'))
+    return render_template('admin/menu-add.html',form=form)
 
 
 # 隐藏或显示导航菜单
@@ -125,17 +129,23 @@ def get_category_info(id=None):
 
 
 # 修改分类
-@admin.route('/category/edit/', methods=['POST'])
+@admin.route('/category/edit/<int:id>', methods=['POST','GET'])
 @login_required
-def category_edit():
-    form = EditCategoryForm(request.form)
-    category = Category.query.filter_by(id=form.id.data).first()
-    (category.categoryName, category.menuid) = (
-        form.categoryname.data, form.menuselect.data)
-    db.session.add(category)
-    db.session.commit()
-    flash(u'修改分类成功', 'success')
-    return redirect(url_for('admin.category_list'))
+def category_edit(id=None):
+    form = EditCategoryForm()
+    category = Category.query.filter_by(id=id).first()
+    form.categoryname.data = category.categoryName
+    form.menuselect.data = category.menuid
+    form.visibled.data = category.visibled
+    if form.validate_on_submit():
+        reqform = EditCategoryForm(request.form)
+        (category.categoryName, category.menuid) = (
+            reqform.categoryname.data, reqform.menuselect.data)
+        db.session.add(category)
+        db.session.commit()
+        flash(u'修改分类成功', 'success')
+        return redirect(url_for('admin.category_list'))
+    return render_template('admin/category-add.html',form=form)
 
 
 # 新增分类
@@ -145,7 +155,7 @@ def category_add():
     categoryform = AddCategoryForm()
     if categoryform.validate_on_submit():
         if Category.insert_category(categoryform.categoryname.data,
-                                    categoryform.menuselect.data):
+                                    categoryform.menuselect.data,categoryform.visibled.data):
             flash(u'新增成功', 'success')
         else:
             flash(u'新增失败', 'warning')
@@ -173,7 +183,7 @@ def category_del(id=None):
 def post_list(page=1):
     posts = Post.query.order_by(Post.timestamp).paginate(page, per_page=10,
                                                          error_out=False)
-    return render_template('admin/post-list.html', posts=posts)
+    return render_template('admin/post.html', posts=posts)
 
 
 # 新增博文章
@@ -224,9 +234,9 @@ def post_edit(id=None):
 
 
 # 删除文章
-@admin.route('/posts/del/<int:id>')
+@admin.route('/post/del/<int:id>')
 @login_required
-def posts_del(id=None):
+def post_del(id=None):
     post = Post.query.filter_by(id=id).first()
     db.session.delete(post)
     db.session.commit()

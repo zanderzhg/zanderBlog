@@ -5,7 +5,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-md-9">
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">菜单列表</h3>
@@ -55,47 +55,80 @@
                                     <tbody>
 
                                     {% for menu in menulst.items %}
-                                    <tr role="row" class="odd">
-                                        <td class="sorting_1">{{ menu.id }}</td>
-                                        <td>{{ menu.menuName }}</td>
-                                        <td><span class="label label-{{ 'warning' if menu.visible else 'success' }}">{{ '隐藏' if menu.visible else '显示' }}</span></td>
-                                        <td>
-                                            <a href="" title="修改"><i
-                                                    class="fa fa-pencil"></i></a>
-                                            <a onclick="delMenu('{{ url_for('admin.menu_del',id=menu.id) }}')"><i
-                                                    class="fa fa-trash"></i></a>
-                                        </td>
-                                    </tr>
+                                        <tr role="row" class="{{ loop.cycle('odd','even') }}">
+                                            <td class="sorting_1">{{ menu.id }}</td>
+                                            <td>{{ menu.menuName }}</td>
+                                            <td><span
+                                                    class="label label-{{ 'warning' if menu.visible else 'success' }}">{{ '隐藏' if menu.visible else '显示' }}</span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin.menu_edit',id=menu.id) }}" title="修改"><i
+                                                        class="fa fa-pencil"></i></a>
+                                                <a onclick="delMenu('{{ url_for('admin.menu_del',id=menu.id) }}')"><i
+                                                        class="fa fa-trash"></i></a>
+                                            </td>
+                                        </tr>
                                     {% endfor %}
 
 
                                     </tbody>
                                     <tfoot>
-{#                                    <tr>#}
-{#                                        <th rowspan="1" colspan="1">Rendering#}
-{#                                            engine#}
-{#                                        </th>#}
-{#                                        <th rowspan="1" colspan="1">Browser</th>#}
-{#                                        <th rowspan="1" colspan="1">#}
-{#                                            Platform(s)#}
-{#                                        </th>#}
-{#                                        <th rowspan="1" colspan="1">Engine#}
-{#                                            version#}
-{#                                        </th>#}
-{#                                    </tr>#}
+                                    {#                                    <tr>#}
+                                    {#                                        <th rowspan="1" colspan="1">Rendering#}
+                                    {#                                            engine#}
+                                    {#                                        </th>#}
+                                    {#                                        <th rowspan="1" colspan="1">Browser</th>#}
+                                    {#                                        <th rowspan="1" colspan="1">#}
+                                    {#                                            Platform(s)#}
+                                    {#                                        </th>#}
+                                    {#                                        <th rowspan="1" colspan="1">Engine#}
+                                    {#                                            version#}
+                                    {#                                        </th>#}
+                                    {#                                    </tr>#}
                                     </tfoot>
                                 </table>
                             </div>
                         </div>
 
-    {{ helper.render_pagination(menulst,'.menu_list') }}
-
+                        {{ helper.render_pagination(menulst,'.menu_list') }}
 
 
                     </div>
                 </div>
                 <!-- /.box-body -->
             </div>
+        </div>
+        <div class="col-md-3">
+            <!-- general form elements -->
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title">新增导航</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form action="{{ url_for('admin.menu_add') }}" method="POST" role="form">
+                    {{ addmenuform.hidden_tag() }}
+                    <div class="box-body">
+                        <div class="form-group">
+                            {{ addmenuform.menuname.label() }}
+                            {{ addmenuform.menuname(class_="form-control") }}
+                            {% for error in addmenuform.menuname.errors %}
+                                <span style="color:red">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            {{ addmenuform.visibled.label() }}
+                            {{ addmenuform.visibled() }}
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+
+                    <div class="box-footer">
+                        {{ addmenuform.submit(class_="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+            <!-- /.box -->
         </div>
     </div>
 

@@ -74,7 +74,7 @@ desired effect
         </a>
 
         <!-- Header Navbar -->
-        <nav class="navbar navbar-static-top" role="navigation">
+        <nav class="navbar navbar-fixed-top" role="navigation">
             <!-- Sidebar toggle button-->
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas"
                role="button">
@@ -98,12 +98,12 @@ desired effect
                                 <ul class="menu">
                                     <li><!-- start message -->
                                         <a href="#">
-                                            <div class="pull-left">
-                                                <!-- User Image -->
-                                                <img src="{{ url_for('static',filename="dist/img/user2-160x160.jpg") }}"
-                                                     class="img-circle"
-                                                     alt="User Image">
-                                            </div>
+{#                                            <div class="pull-left">#}
+{#                                                <!-- User Image -->#}
+{#                                                <img src="{{ url_for('static',filename="dist/img/user2-160x160.jpg") }}"#}
+{#                                                     class="img-circle"#}
+{#                                                     alt="User Image">#}
+{#                                            </div>#}
                                             <!-- Message title and timestamp -->
                                             <h4>
                                                 Support Team
@@ -310,7 +310,7 @@ desired effect
                         </li>
                     </ul>
                 </li>
-                <li class="treeview">
+                <li class="treeview active">
                     <a href="#"><i class="fa fa-link"></i>
                         <span>导航分类</span>
                         <span class="pull-right-container">
@@ -328,7 +328,7 @@ desired effect
                 </li>
                 <li><a href="#"><i class="fa fa-link"></i>
                     <span>Another Link</span></a></li>
-                <li class="treeview">
+                <li class="treeview active">
                     <a href="#"><i class="fa fa-link"></i>
                         <span>Multilevel</span>
                         <span class="pull-right-container">
@@ -362,6 +362,12 @@ desired effect
 
         <!-- Main content -->
         <section class="content">
+        {% for status,message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{ status }}">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>消息!</strong> {{ message }}
+            </div>
+        {% endfor %}
 
             {% block content %}
 

@@ -1,11 +1,12 @@
 {% extends 'admin/admin-base.html' %}
 {% import 'admin/_macro.html' as helper %}
+
 {% block content %}
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">分类列表</h3>
+                    <h3 class="box-title">博文列表</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -33,18 +34,24 @@
                                             aria-controls="example2" rowspan="1"
                                             colspan="1"
                                             aria-label="Browser: activate to sort column ascending">
-                                            分类名称
+                                            标题
                                         </th>
                                         <th class="sorting" tabindex="0"
                                             aria-controls="example2" rowspan="1"
                                             colspan="1"
                                             aria-label="Platform(s): activate to sort column ascending">
-                                            所属菜单
+                                            所属分类
                                         </th>
                                         <th class="sorting" tabindex="0"
                                             aria-controls="example2" rowspan="1"
                                             colspan="1"
                                             aria-label="Platform(s): activate to sort column ascending">
+                                            更新时间
+                                        </th>
+                                        <th class="sorting" tabindex="0"
+                                            aria-controls="example2" rowspan="1"
+                                            colspan="1"
+                                            aria-label="Engine version: activate to sort column ascending">
                                             是否显示
                                         </th>
                                         <th class="sorting" tabindex="0"
@@ -57,18 +64,23 @@
                                     </thead>
                                     <tbody>
 
-                                    {% for category in categories.items %}
+                                    {% for post in posts.items %}
                                         <tr role="row" class="{{ loop.cycle('odd','even') }}">
-                                            <td class="sorting_1">{{ category.id }}</td>
-                                            <td>{{ category.categoryName }}</td>
-                                            <td>{{ category.menus.menuName }}</td>
+                                            <td class="sorting_1">{{ post.id }}</td>
+                                            <td>{{ post.title }}</td>
+                                            <td>{{ post.posttype.categoryName }}</td>
+                                            <td>
+                                                {{ post.timestamp }}
+                                            </td>
                                             <td><span
-                                                    class="label label-{{ 'warning' if category.visibled else 'success' }}">{{ '隐藏' if category.visibled else '显示' }}</span>
+                                                    class="label label-{{ 'warning' if post.visibled else 'success' }}">{{ '隐藏' if post.visibled else '显示' }}</span>
                                             </td>
                                             <td>
-                                                <a href="{{ url_for('admin.category_edit',id=category.id) }}" title="修改"><i
+                                                <a href="{{ url_for('admin.post_edit',id=post.id) }}"
+                                                   title="修改"><i
                                                         class="fa fa-pencil"></i></a>
-                                                <a onclick="delCategory('{{ url_for('admin.category_del',id=category.id) }}')" title="删除"><i
+                                                <a onclick="delPost('{{ url_for('admin.post_del',id=post.id) }}')"
+                                                   title="删除"><i
                                                         class="fa fa-trash"></i></a>
                                             </td>
                                         </tr>
@@ -83,7 +95,7 @@
                             </div>
                         </div>
 
-                        {{ helper.render_pagination(categories,'.category_list') }}
+                        {{ helper.render_pagination(posts,'.post_list') }}
 
 
                     </div>
@@ -91,45 +103,9 @@
                 <!-- /.box-body -->
             </div>
         </div>
-        <div class="col-md-3">
-            <!-- general form elements -->
-            <div class="box box-default">
-                <div class="box-header with-border">
-                    <h3 class="box-title">新增分类</h3>
-                </div>
-                <!-- /.box-header -->
-                <!-- form start -->
-                <form action="{{ url_for('admin.category_add') }}" method="POST" role="form">
-                    {{ addcategoryform.hidden_tag() }}
-                    <div class="box-body">
-                        <div class="form-group">
-                            {{ addcategoryform.categoryname.label() }}
-                            {{ addcategoryform.categoryname(class_="form-control") }}
-                            {% for error in addcategoryform.categoryname.errors %}
-                                <span style="color:red">{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                        <div class="form-group">
-                            {{ addcategoryform.menuselect.label() }}
-                            {{ addcategoryform.menuselect(class_="form-control") }}
-                        </div>
-                        <div class="form-group">
-                            {{ addcategoryform.visibled.label() }}
-                            {{ addcategoryform.visibled() }}
-                        </div>
-                    </div>
-                    <!-- /.box-body -->
-
-                    <div class="box-footer">
-                        {{ addcategoryform.submit(class_="btn btn-primary") }}
-                    </div>
-                </form>
-            </div>
-            <!-- /.box -->
-        </div>
     </div>
 
-    <div class="modal fade" id="delCategoryModal">
+    <div class="modal fade" id="delPostModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -137,16 +113,17 @@
                     <h4 class="modal-title">提示框</h4>
                 </div>
                 <div class="modal-body">
-                    删除后将不可恢复,是否继续删除
+                    删除后将不可恢复
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button id="delCategoryCli" type="button" class="btn btn-primary">确认</button>
+                    <button id="delPostCli" type="button" class="btn btn-primary">确定</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 {% endblock %}
+
 {% block scripts %}
     <script src="{{ url_for('static',filename='admin/admin.js') }}"></script>
 {% endblock %}

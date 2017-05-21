@@ -91,13 +91,13 @@ class Category(db.Model):
 
     # 新增分类
     @staticmethod
-    def insert_category(categoryname, id=None):
+    def insert_category(categoryname, id=None,visibled=False):
         tempcategory = Category.query.filter_by(
             categoryName=categoryname).first()
         if tempcategory is not None:
             return False
         else:
-            category = Category(categoryName=categoryname, menuid=id)
+            category = Category(categoryName=categoryname, menuid=id,visibled=visibled)
             db.session.add(category)
             db.session.commit()
             category.orderNo = category.id
