@@ -1,36 +1,58 @@
 {% extends 'main/main-base.html' %}
-{% import 'admin/_macro.html' as helper %}
+{% import 'admin/_macro.html' as helpers %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-md-9">
+            {% for post in posts.items %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3 class="post-title"><a href="#">{{ post.title }}</a></h3>
+                        <div class="post-meta">
+                            <span>作者：<a href="#">{{ post.author.userName }}</a> | </span>
+                            <span>时间：{{ post.timestamp }} | </span>
+                            <span>分类：<a href="#">{{ post.posttype.categoryName }}</a></span>
+                        </div>
+                        <div class="post-content">
+                            {% if post.body_html %}
+                                {{ post.body_html|safe }}
+                            {% else %}
+                                {{ post.body }}
+                            {% endif %}
 
-    {% for post in posts.items %}
-        <div class="box box-primary with-border">
-            <input type="hidden" name="id" value="{{ post.id }}">
-            <div class="box-header">
-                <h1 class="box-title">{{ post.title }}</h1>
-            </div>
-            <div class="box-body">
-                <p>{% if post.body_html %}
-                    {{ post.body_html|safe }}
-                {% else %}
-                    {{ post.body }}
-                {% endif %}</p>
-            </div>
-            <div class="box-footer">
-                <div>
-                    <span class="badge">Posted {{ post.timestamp }}</span>
-                    <div class="pull-right"><span
-                            class="label label-default">alice</span> <span
-                            class="label label-primary">story</span> <span
-                            class="label label-success">blog</span> <span
-                            class="label label-info">personal</span> <span
-                            class="label label-warning">Warning</span>
-                        <span class="label label-danger">Danger</span></div>
+                            <p class="more">
+                                <a href="">阅读全文</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">分类</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge">5</span>
+                            Item 1
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">1</span>
+                            Item 2
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">25</span>
+                            Item 3
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-    {% endfor %}
-
-    {{ helper.render_pagination(posts,'.index') }}
+    </div>
 
 {% endblock %}
